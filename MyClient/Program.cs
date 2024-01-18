@@ -30,6 +30,7 @@ builder.Services.AddAuthentication(config =>
             },
         };
         options.ClaimActions.Remove("iat");
+        options.ClaimActions.Remove("aud");
     });
 builder.Services.AddControllersWithViews();
 

@@ -13,6 +13,7 @@ namespace OAuth20.Server.Controllers
             {
                 issuer = "https://localhost:7209",
                 authorization_endpoint = "https://localhost:7209/Home/Authorize",
+                end_session_endpoint = "https://localhost:7209/Home/LoggedOut",
                 token_endpoint = "https://localhost:7209/Home/Token",
                 token_endpoint_auth_methods_supported = new string[] { "client_secret_basic", "private_key_jwt" },
                 token_endpoint_auth_signing_alg_values_supported = new string[] { "RS256", "ES256" },

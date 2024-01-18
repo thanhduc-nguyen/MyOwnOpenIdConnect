@@ -47,6 +47,12 @@ namespace OAuth20.Server.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult LoggedOut()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(OpenIdConnectLoginRequest loginRequest)
         {
