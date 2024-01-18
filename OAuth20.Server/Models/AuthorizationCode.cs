@@ -14,5 +14,7 @@ namespace OAuth20.Server.Models
 
         public ClaimsPrincipal Subject { get; set; }
         public string Nonce { get; set; }
+        public string CodeChallenge { get; set; }
+        public string CodeChallengeMethod { get; set; }
     }
 }

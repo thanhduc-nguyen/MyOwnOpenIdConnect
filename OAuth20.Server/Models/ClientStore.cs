@@ -13,7 +13,8 @@
                 GrantType = GrantTypes.Code,
                 IsActive = true,
                 ClientUri = "https://localhost:7117",
-                RedirectUri = "https://localhost:7117/signin-oidc"
+                RedirectUri = "https://localhost:7117/signin-oidc",
+                UsePkce = true,
             }
         };
     }

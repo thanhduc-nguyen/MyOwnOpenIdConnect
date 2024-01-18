@@ -20,5 +20,6 @@
 
         public string ClientUri { get; set; }
         public string RedirectUri { get; set; }
+        public bool UsePkce { get; set; }
     }
 }

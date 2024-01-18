@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using OAuth20.Server.Models;
+using OAuth20.Server.OauthRequest;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 
@@ -13,9 +14,9 @@ namespace OAuth20.Server.Services.CodeService
         // Here I genrate the code for authorization, and I will store it 
         // in the Concurrent Dictionary
 
-        public string GenerateAuthorizationCode(string clientId, IList<string> requestedScope)
+        public string GenerateAuthorizationCode(AuthorizationRequest authorizationRequest, IList<string> requestedScope)
         {
-            var client = _clientStore.Clients.Where(x => x.ClientId == clientId).FirstOrDefault();
+            var client = _clientStore.Clients.Where(x => x.ClientId == authorizationRequest.client_id).FirstOrDefault();
 
             if (client != null)
             {
@@ -23,9 +24,12 @@ namespace OAuth20.Server.Services.CodeService
 
                 var authoCode = new AuthorizationCode
                 {
-                    ClientId = clientId,
+                    ClientId = client.ClientId,
                     RedirectUri = client.RedirectUri,
                     RequestedScopes = requestedScope,
+                    Nonce = authorizationRequest.nonce,
+                    CodeChallenge = authorizationRequest.code_challenge,
+                    CodeChallengeMethod = authorizationRequest.code_challenge_method,
                 };
 
                 // then store the code is the Concurrent Dictionary
@@ -84,7 +88,9 @@ namespace OAuth20.Server.Services.CodeService
                         IsOpenId = requestedScopes.Contains("openId") || requestedScopes.Contains("profile"),
                         RedirectUri = oldValue.RedirectUri,
                         RequestedScopes = requestedScopes,
-                        Nonce = nonce
+                        Nonce = oldValue.Nonce,
+                        CodeChallenge = oldValue.CodeChallenge,
+                        CodeChallengeMethod = oldValue.CodeChallengeMethod,
                     };
 
                     // ------------------ I suppose the user name and password is correct  -----------------

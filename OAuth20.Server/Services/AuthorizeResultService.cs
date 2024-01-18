@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using OAuth20.Server.Common;
 using OAuth20.Server.Models;
 using OAuth20.Server.OauthRequest;
@@ -6,6 +7,7 @@ using OAuth20.Server.OauthResponse;
 using OAuth20.Server.Services.CodeService;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace OAuth20.Server.Services
@@ -77,7 +79,7 @@ namespace OAuth20.Server.Services
             // (If no openid scope value is present,
             // the request may still be a valid OAuth 2.0 request, but is not an OpenID Connect request.)
 
-            string code = _codeStoreService.GenerateAuthorizationCode(authorizationRequest.client_id, clientScopes.ToList());
+            string code = _codeStoreService.GenerateAuthorizationCode(authorizationRequest, clientScopes.ToList());
             if (code == null)
             {
                 response.Error = ErrorTypeEnum.TemporarilyUnAvailable.GetEnumDescription();
@@ -126,6 +128,14 @@ namespace OAuth20.Server.Services
             // TODO: 
             // also I have to check the rediret uri 
 
+            if (checkClientResult.Client.UsePkce)
+            {
+                var pkceResult = CodeVerifierIsSendByTheClientThatReceivedTheCode(request.code_verifier,
+                    clientCodeChecker.CodeChallenge, clientCodeChecker.CodeChallengeMethod);
+
+                if (!pkceResult)
+                    return new TokenResponse { Error = ErrorTypeEnum.InvalidGrant.GetEnumDescription() };
+            }
 
             // Here I will Issue the Id_token
             JwtSecurityToken id_token = null;
@@ -215,6 +225,25 @@ namespace OAuth20.Server.Services
 
             result.ErrorDescription = ErrorTypeEnum.AccessDenied.GetEnumDescription();
             return result;
+        }
+
+        private bool CodeVerifierIsSendByTheClientThatReceivedTheCode(string codeVerifier, string codeChallenge, string codeChallengeMethod)
+        {
+            var odeVerifireAsByte = Encoding.ASCII.GetBytes(codeVerifier);
+
+            if (codeChallengeMethod == "plain")
+            {
+                using var shaPalin = SHA256.Create();
+                var computedHashPalin = shaPalin.ComputeHash(odeVerifireAsByte);
+                var tranformedResultPalin = Base64UrlEncoder.Encode(computedHashPalin);
+                return tranformedResultPalin.Equals(codeChallenge);
+            }
+
+            using var shaS256 = SHA256.Create();
+            var computedHashS256 = shaS256.ComputeHash(odeVerifireAsByte);
+            var tranformedResultS256 = Base64UrlEncoder.Encode(computedHashS256);
+
+            return tranformedResultS256.Equals(codeChallenge);
         }
     }
 }

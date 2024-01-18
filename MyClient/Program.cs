@@ -29,6 +29,7 @@ builder.Services.AddAuthentication(config =>
                 return jwt;
             },
         };
+        options.ClaimActions.Remove("iat");
     });
 builder.Services.AddControllersWithViews();
 
