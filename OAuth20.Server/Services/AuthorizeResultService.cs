@@ -160,7 +160,7 @@ namespace OAuth20.Server.Services
                 foreach (var amr in amrs)
                     claims.Add(new Claim("amr", amr));// authentication method reference 
 
-                id_token = new JwtSecurityToken("https://localhost:7209", request.client_id, claims, signingCredentials: credentials, 
+                id_token = new JwtSecurityToken("https://localhost:7000", request.client_id, claims, signingCredentials: credentials, 
                     expires: DateTime.UtcNow.AddMinutes(int.Parse("5")));
             }
 

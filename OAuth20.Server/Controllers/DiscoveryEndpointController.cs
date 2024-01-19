@@ -11,10 +11,10 @@ namespace OAuth20.Server.Controllers
         {
             var response = new DiscoveryResponse
             {
-                issuer = "https://localhost:7209",
-                authorization_endpoint = "https://localhost:7209/Home/Authorize",
-                end_session_endpoint = "https://localhost:7209/Home/LoggedOut",
-                token_endpoint = "https://localhost:7209/Home/Token",
+                issuer = "https://localhost:7000",
+                authorization_endpoint = "https://localhost:7000/Home/Authorize",
+                end_session_endpoint = "https://localhost:7000/Home/LoggedOut",
+                token_endpoint = "https://localhost:7000/Home/Token",
                 token_endpoint_auth_methods_supported = new string[] { "client_secret_basic", "private_key_jwt" },
                 token_endpoint_auth_signing_alg_values_supported = new string[] { "RS256", "ES256" },
 
@@ -35,7 +35,7 @@ namespace OAuth20.Server.Controllers
                     "family_name", "nickname", "profile", "picture", "website", "email", "email_verified",
                     "locale", "zoneinfo" },
                 claims_parameter_supported = true,
-                service_documentation = "https://localhost:7209/connect/service_documentation.html",
+                service_documentation = "https://localhost:7000/connect/service_documentation.html",
                 ui_locales_supported = new string[] { "en-US", "en-GB", "en-CA", "fr-FR", "fr-CA" }
             };
 

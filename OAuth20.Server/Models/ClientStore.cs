@@ -12,8 +12,8 @@
                 AllowedScopes = new[]{ "openid", "profile"},
                 GrantType = GrantTypes.Code,
                 IsActive = true,
-                ClientUri = "https://localhost:7117",
-                RedirectUri = "https://localhost:7117/signin-oidc",
+                ClientUri = "https://localhost:2000",
+                RedirectUri = "https://localhost:2000/signin-oidc",
                 UsePkce = true,
             }
         };

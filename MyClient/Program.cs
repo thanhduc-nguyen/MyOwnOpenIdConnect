@@ -14,7 +14,7 @@ builder.Services.AddAuthentication(config =>
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
-        options.Authority = "https://localhost:7209"; // This is the OAuth20.Server URI
+        options.Authority = "https://localhost:7000"; // This is the OAuth20.Server URI
         options.ClientId = "myclient";
         options.ClientSecret = "123456789";
         options.ResponseType = "code";
