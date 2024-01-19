@@ -1,1 +1,10 @@
-﻿<h1>You are logged out.</h1>
+﻿@model LoggedOutViewModel
+
+<h1>You are logged out.</h1>
+
+@{
+    var redirectUrl = Model.PostLogoutRedirectUri + "?state=" + Model.State;
+}
+
+<div>Click <a href="@redirectUrl">here</a> to redirect to the client.</div>
+

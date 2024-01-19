@@ -19,6 +19,7 @@ builder.Services.AddAuthentication(config =>
         options.ClientSecret = "123456789";
         options.ResponseType = "code";
         options.CallbackPath = "/signin-oidc";
+        options.SignedOutCallbackPath = "/signout-callback-oidc";
         options.SaveTokens = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {

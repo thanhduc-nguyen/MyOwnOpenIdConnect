@@ -2,6 +2,8 @@
 using OAuth20.Server.OauthRequest;
 using OAuth20.Server.Services.CodeService;
 using OAuth20.Server.Services;
+using System.IdentityModel.Tokens.Jwt;
+using OAuth20.Server.Models;
 
 namespace OAuth20.Server.Controllers
 {
@@ -10,12 +12,14 @@ namespace OAuth20.Server.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthorizeResultService _authorizeResultService;
         private readonly ICodeStoreService _codeStoreService;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(IHttpContextAccessor httpContextAccessor, IAuthorizeResultService authorizeResultService, ICodeStoreService codeStoreService)
+        public HomeController(IHttpContextAccessor httpContextAccessor, IAuthorizeResultService authorizeResultService, ICodeStoreService codeStoreService, IConfiguration configuration)
         {
             _httpContextAccessor = httpContextAccessor;
             _authorizeResultService = authorizeResultService;
             _codeStoreService = codeStoreService;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -48,9 +52,22 @@ namespace OAuth20.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoggedOut()
+        public IActionResult LoggedOut(string post_logout_redirect_uri, string state)
         {
-            return View();
+            if (bool.Parse(_configuration["OpenIdConnect:AutomaticRedirectAfterSignOut"]))
+            {
+                return Redirect($"{post_logout_redirect_uri}?state={state}");
+            }
+            else
+            {
+                var model = new LoggedOutViewModel
+                {
+                    PostLogoutRedirectUri = post_logout_redirect_uri,
+                    State = state
+                };
+
+                return View(model);
+            }
         }
 
         [HttpPost]
@@ -62,7 +79,7 @@ namespace OAuth20.Server.Controllers
 
             var result = _codeStoreService.UpdatedClientDataByCode(loginRequest.Code, loginRequest.RequestedScopes,
                 loginRequest.UserName, nonce: loginRequest.Nonce);
-            
+
             if (result != null)
             {
                 loginRequest.RedirectUri = loginRequest.RedirectUri + "&code=" + loginRequest.Code;
