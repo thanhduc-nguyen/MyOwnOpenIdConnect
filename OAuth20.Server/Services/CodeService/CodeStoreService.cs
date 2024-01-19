@@ -61,7 +61,7 @@ namespace OAuth20.Server.Services.CodeService
         // Before updating the Concurrent Dictionary I have to Process User Sign In, and check the user crediential first
         // But here I merge this process here inside update Concurrent Dictionary method
         public AuthorizationCode UpdatedClientDataByCode(string key, IList<string> requestedScopes,
-            string userName, string password = null, string nonce = null)
+            ClaimsPrincipal claimsPrincipal, string nonce = null)
         {
             var oldValue = GetClientDataByCode(key);
 
@@ -93,19 +93,10 @@ namespace OAuth20.Server.Services.CodeService
                         CodeChallengeMethod = oldValue.CodeChallengeMethod,
                     };
 
-                    // ------------------ I suppose the user name and password is correct  -----------------
-                    var claims = new List<Claim>();
-                    
                     if (newValue.IsOpenId)
                     {
-                        // TODO
-                        // Add more claims to the claims
-
+                        newValue.Subject = claimsPrincipal;
                     }
-
-                    var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    newValue.Subject = new ClaimsPrincipal(claimIdentity);
-                    // ------------------ -----------------------------------------------  -----------------
 
                     var result = _codeIssued.TryUpdate(key, newValue, oldValue);
 

@@ -142,23 +142,22 @@ namespace OAuth20.Server.Services
             if (clientCodeChecker.IsOpenId)
             {
                 // Generate Identity Token
-                int iat = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
-
+                string iat = DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds.ToString();
 
                 string[] amrs = new string[] { "pwd" };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyAlg));
                 var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var claims = new List<Claim>()
-                {
-                    new Claim("sub", "856933325856"),
-                    new Claim("given_name", "Thanh Duc Nguyen"),
-                    new Claim("iat", iat.ToString(), ClaimValueTypes.Integer), // time stamp
-                    new Claim("nonce", clientCodeChecker.Nonce)
-                };
+
+                var claims = clientCodeChecker.Subject.Claims.ToList();
+                claims.Add(new Claim("iat", iat));
+                claims.Add(new Claim("nonce", clientCodeChecker.Nonce));
+                
                 foreach (var amr in amrs)
-                    claims.Add(new Claim("amr", amr));// authentication method reference 
+                {
+                    claims.Add(new Claim("amr", amr)); // authentication method reference 
+                }
 
                 id_token = new JwtSecurityToken("https://localhost:7000", request.client_id, claims, signingCredentials: credentials, 
                     expires: DateTime.UtcNow.AddMinutes(int.Parse("5")));

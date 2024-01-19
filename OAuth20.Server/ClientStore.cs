@@ -1,4 +1,6 @@
-﻿namespace OAuth20.Server.Models
+﻿using OAuth20.Server.Models;
+
+namespace OAuth20.Server
 {
     public class ClientStore
     {
@@ -9,7 +11,7 @@
                 ClientName = "myclient .Net 6",
                 ClientId = "myclient",
                 ClientSecret = "123456789",
-                AllowedScopes = new[]{ "openid", "profile"},
+                AllowedScopes = new[] { "openid", "profile" },
                 GrantType = GrantTypes.Code,
                 IsActive = true,
                 ClientUri = "https://localhost:2000",

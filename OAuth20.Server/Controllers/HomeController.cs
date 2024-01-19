@@ -4,6 +4,8 @@ using OAuth20.Server.Services.CodeService;
 using OAuth20.Server.Services;
 using System.IdentityModel.Tokens.Jwt;
 using OAuth20.Server.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace OAuth20.Server.Controllers
 {
@@ -73,20 +75,31 @@ namespace OAuth20.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(OpenIdConnectLoginRequest loginRequest)
         {
-            // here I have to check if the username and passowrd is correct
-            // and I will show you how to integrate the ASP.NET Core Identity
-            // With our framework
+            var user = UserStore.Users.Find(u => u.Username.Equals(loginRequest.UserName, StringComparison.OrdinalIgnoreCase) &&
+                u.Password.Equals(loginRequest.Password, StringComparison.OrdinalIgnoreCase));
 
-            var result = _codeStoreService.UpdatedClientDataByCode(loginRequest.Code, loginRequest.RequestedScopes,
-                loginRequest.UserName, nonce: loginRequest.Nonce);
-
-            if (result != null)
+            if(user != null)
             {
-                loginRequest.RedirectUri = loginRequest.RedirectUri + "&code=" + loginRequest.Code;
-                return Redirect(loginRequest.RedirectUri);
-            }
+                var claims = user.Claims.ToList();
+                claims.Add(new Claim("sub", user.SubjectId.ToString()));
+                var claimIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimIdentity);
+                var result = _codeStoreService.UpdatedClientDataByCode(loginRequest.Code, loginRequest.RequestedScopes,
+                    claimsPrincipal, nonce: loginRequest.Nonce);
 
-            return RedirectToAction("Error", new { error = "invalid_request" });
+                if (result != null)
+                {
+                    loginRequest.RedirectUri = loginRequest.RedirectUri + "&code=" + loginRequest.Code;
+                    return Redirect(loginRequest.RedirectUri);
+                }
+
+                return RedirectToAction("Error", new { error = "invalid_request" });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { error = "invalid username or password" });
+            }
+           
         }
 
         public JsonResult Token()
