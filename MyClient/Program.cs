@@ -11,7 +11,10 @@ builder.Services.AddAuthentication(config =>
     config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
-    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.AccessDeniedPath = "/Authentication/AccessDenied";
+    })
     .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
         options.Authority = "https://localhost:7000"; // This is the OAuth20.Server URI
@@ -29,6 +32,8 @@ builder.Services.AddAuthentication(config =>
                 var jwt = new JwtSecurityToken(token);
                 return jwt;
             },
+            RoleClaimType = "role",
+            NameClaimType = "given_name",
         };
         options.ClaimActions.Remove("iat");
         options.ClaimActions.Remove("aud");

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MyClient.Controllers
 {
@@ -13,6 +14,16 @@ namespace MyClient.Controllers
         [Authorize]
         public IActionResult SecretZone()
         {
+            var roles = ((ClaimsIdentity)User.Identity).Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value);
+            return View();
+        }
+
+        [Authorize(Roles = "PayingUser")]
+        public IActionResult PayingUserZone()
+        {
+
             return View();
         }
     }

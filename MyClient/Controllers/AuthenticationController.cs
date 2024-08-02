@@ -18,5 +18,10 @@ namespace MyClient.Controllers
             // Sign out of the OpenIdConnect scheme. Redirect to end_session_endpoint.
             await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

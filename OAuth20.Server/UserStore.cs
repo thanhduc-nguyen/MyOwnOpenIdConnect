@@ -19,6 +19,7 @@ namespace OAuth20.Server
 
                     Claims = new List<Claim>
                     {
+                        new Claim("role", "FreeUser"),
                         new Claim("given_name", "Wayne"),
                         new Claim("family_name", "Rooney")
                     }
@@ -31,6 +32,7 @@ namespace OAuth20.Server
 
                     Claims = new List<Claim>
                     {
+                        new Claim("role", "PayingUser"),
                         new Claim("given_name", "Paul"),
                         new Claim("family_name", "Scholes")
                     }

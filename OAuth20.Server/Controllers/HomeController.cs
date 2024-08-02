@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using OAuth20.Server.OauthRequest;
-using OAuth20.Server.Services.CodeService;
-using OAuth20.Server.Services;
-using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using OAuth20.Server.Models;
+using OAuth20.Server.OauthRequest;
+using OAuth20.Server.Services;
+using OAuth20.Server.Services.CodeService;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace OAuth20.Server.Controllers
 {
@@ -78,7 +77,7 @@ namespace OAuth20.Server.Controllers
             var user = UserStore.Users.Find(u => u.Username.Equals(loginRequest.UserName, StringComparison.OrdinalIgnoreCase) &&
                 u.Password.Equals(loginRequest.Password, StringComparison.OrdinalIgnoreCase));
 
-            if(user != null)
+            if (user != null)
             {
                 var claims = user.Claims.ToList();
                 claims.Add(new Claim("sub", user.SubjectId.ToString()));
@@ -99,7 +98,7 @@ namespace OAuth20.Server.Controllers
             {
                 return RedirectToAction("Error", new { error = "invalid username or password" });
             }
-           
+
         }
 
         public JsonResult Token()

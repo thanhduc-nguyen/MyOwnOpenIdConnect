@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using OAuth20.Server.Models;
+﻿using OAuth20.Server.Models;
 using OAuth20.Server.OauthRequest;
 using System.Collections.Concurrent;
 using System.Security.Claims;

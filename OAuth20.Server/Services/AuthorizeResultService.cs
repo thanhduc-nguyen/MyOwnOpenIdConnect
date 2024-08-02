@@ -1,5 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using OAuth20.Server.Common;
 using OAuth20.Server.Models;
 using OAuth20.Server.OauthRequest;
@@ -153,13 +152,13 @@ namespace OAuth20.Server.Services
                 var claims = clientCodeChecker.Subject.Claims.ToList();
                 claims.Add(new Claim("iat", iat));
                 claims.Add(new Claim("nonce", clientCodeChecker.Nonce));
-                
+
                 foreach (var amr in amrs)
                 {
                     claims.Add(new Claim("amr", amr)); // authentication method reference 
                 }
 
-                id_token = new JwtSecurityToken("https://localhost:7000", request.client_id, claims, signingCredentials: credentials, 
+                id_token = new JwtSecurityToken("https://localhost:7000", request.client_id, claims, signingCredentials: credentials,
                     expires: DateTime.UtcNow.AddMinutes(int.Parse("5")));
             }
 
@@ -167,7 +166,7 @@ namespace OAuth20.Server.Services
             var key_at = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyAlg));
             var credentials_at = new SigningCredentials(key_at, SecurityAlgorithms.HmacSha256);
             var claims_at = new List<Claim>();
-            
+
             var access_token = new JwtSecurityToken("https://localhost:7275", request.client_id, claims_at, signingCredentials: credentials_at,
                 expires: DateTime.UtcNow.AddMinutes(
                    int.Parse("5")));
